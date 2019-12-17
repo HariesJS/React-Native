@@ -1,50 +1,38 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Text, TextInput, Button, ScrollView, TouchableOpacity } from 'react-native';
 import { THEME } from '../theme';
 
-const BodyBlock = ({ onScreen, todos, setTodos }) => {
-    const [value, setValue] = useState('');
+const BodyBlock = ({ todo, value, setTodo, onDelete, setValue, onScreen, setIndex }) => {
 
-    const appendTarget = () => {
-        if (value.trim() && value.trim().length >= 6) {
-            setTodos(state => [
-                ...state,
-                {id: Date.now().toString(), title: value},
-            ])
-            setValue('');
-        } else if (!value.trim()) {
-            Alert.alert('Target is null!');
-        } else if (value.trim().length <= 6) {
-            Alert.alert('Target value have min six symbols!');
-        }
-    }
-
-    const deleteTarget = id => {
-        setTodos(todos.filter(e => e.id !== id));
-    }
     return (
         <View style={styles.body}>
-            <Text style={styles.title}>Owners</Text>
+            <Text style={styles.title}>Targets</Text>
             <View style={styles.form}>
-                <TextInput style={styles.input} value={value} onChangeText={e => setValue(e)} />
-                <Button title='Add' onPress={appendTarget} />
+                <TextInput maxLength={19} style={styles.input} value={value} onChangeText={setValue} />
+                <Button title='Add' onPress={setTodo} />
             </View>
             <ScrollView style={styles.targets}>{
-                !todos.length
-                ? <Text style={styles.undefined}>Targe list is null!</Text>
-                : todos.map(e => (
-                    <View key={e.id}>
+                !todo.length
+                ? <Text style={styles.undefined}>Target list is null</Text>
+                : todo.map(({ id, title }, index) => (
+                    <View key={id}>
                         <TouchableOpacity
-                            onLongPress={() => deleteTarget(e.id)}
-                            onPress={() => onScreen(e.id)}
+                            onPress={() => {
+                                onScreen(id);
+                                setIndex(index + 1);
+                            }}
+                            onLongPress={() => onDelete(id, index + 1)}
                         >
-                            <Text style={styles.target}>{e.title.trim()}</Text>
+                            <View style={styles.block}>
+                                <Text style={styles.index}>{index + 1}</Text>
+                                <Text style={styles.target}>{title.trim()}</Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 ))
             }</ScrollView>
         </View>
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -53,45 +41,58 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        marginTop: '15%',
-        textTransform: 'uppercase',
-        fontSize: 20
+        fontSize: 25,
+        paddingTop: '20%',
+        textTransform: 'uppercase'
+    },
+    circle: {
+        textDecorationLine: 'line-through'
     },
     form: {
         flexDirection: 'row',
     },
     input: {
-        borderStyle: 'solid',
         borderBottomWidth: 2,
+        borderStyle: 'solid',
         borderBottomColor: THEME.MAIN_COLOR,
         width: '60%',
-        marginHorizontal: '2%',
-        shadowColor: 'black',
-        shadowOpacity: 0.4,
-        shadowOffset: {}
-    },
-    undefined: {
-        fontSize: 19,
-        textAlign: 'center',
-        paddingTop: '50%'
+        marginHorizontal: '1%'
     },
     targets: {
         paddingTop: '10%',
-        width: '80%',
-        shadowColor: 'black',
-        shadowOpacity: 0.3,
-        shadowOffset: {}
+        width: '75%'
     },
-    target: {
-        fontSize: 15,
+    block: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
         borderStyle: 'solid',
         borderWidth: 2,
+        shadowColor: 'black',
+        shadowOpacity: 0.5,
+        shadowOffset: {
+            width: 2,
+            height: 2
+        },
         borderColor: THEME.MAIN_COLOR,
-        padding: '5%',
-        borderRadius: 20,
-        alignItems: 'center',
-        margin: '3%',
-        textAlign: 'center'
+        backgroundColor: THEME.MAIN_COLOR,
+        margin: '2%',
+    },
+    index: {
+        color: 'white',
+        fontSize: 20,
+        padding: '4%'
+    },
+    target: {
+        fontSize: 20,
+        color: 'white',
+        padding: '4%',
+    },
+    undefined: {
+        fontSize: 20,
+        textTransform: 'uppercase',
+        textAlign: 'center',
+        paddingTop: '30%'
     }
 })
 

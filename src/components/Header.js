@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { THEME } from '../theme';
 
 const HeaderBlock = () => {
@@ -7,7 +7,7 @@ const HeaderBlock = () => {
         <View style={styles.header}>
             <Text style={styles.title}>Haries Network</Text>
         </View>
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -16,14 +16,14 @@ const styles = StyleSheet.create({
         backgroundColor: THEME.MAIN_COLOR,
         shadowColor: 'black',
         shadowOpacity: 1,
-        shadowOffset: {}
+        shadowOffset: {},
     },
     title: {
-        fontSize: 24,
-        padding: '5%',
-        paddingTop: '11%',
+        fontSize: 22,
+        textTransform: 'uppercase',
         color: 'white',
-        textTransform: 'uppercase'
+        padding: '5%',
+        paddingTop: '10%'
     }
 })
 
