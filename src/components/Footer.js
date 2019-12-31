@@ -1,23 +1,23 @@
-import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import React, { useContext } from 'react';
+import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { Feather, Entypo } from '@expo/vector-icons';
 import { THEME } from '../theme';
+import { ThemeContext } from './context/theme/themeContext';
 
-const WithNav = ({ title }) => {
-    return (
-        <View>
-            <TouchableOpacity onLongPress={() => Alert.alert(title)}>
-                <Text style={styles.nav}>{title}</Text>
-            </TouchableOpacity>
-        </View>
-    )
-}
+const WithNav = (Component, name, color = 'white') => (
+    <TouchableOpacity>
+        <Component name={name} size={35} color={color} />
+    </TouchableOpacity>
+)
 
-const FooterBlock = () => {
+export const FooterBlock = () => {
+    const { color } = useContext(ThemeContext);
+    
     return (
-        <View style={styles.footer}>
-            <WithNav title='Profile' />
-            <WithNav title='Messages' />
-            <WithNav title='Users' />
+        <View style={{...styles.footer, backgroundColor: color}}>
+            {WithNav(Feather, 'menu')}
+            {WithNav(Feather, 'message-circle')}
+            {WithNav(Entypo, 'users')}
         </View>
     )
 }
@@ -25,20 +25,12 @@ const FooterBlock = () => {
 const styles = StyleSheet.create({
     footer: {
         flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
+        flexDirection: 'row-reverse',
         alignItems: 'center',
-        backgroundColor: THEME.MAIN_COLOR,
+        justifyContent: 'space-around',
+        paddingBottom: Platform.OS === 'ios' ? '3%' : 0,
         shadowColor: 'black',
-        shadowOpacity: 1,
+        shadowOpacity: 0.8,
         shadowOffset: {},
-    },
-    nav: {
-        fontSize: 20,
-        textTransform: 'uppercase',
-        paddingHorizontal: '5%',
-        color: 'white'
     }
 })
-
-export default FooterBlock;

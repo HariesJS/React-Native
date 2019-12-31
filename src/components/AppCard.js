@@ -1,10 +1,13 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { THEME } from '../theme';
+import { ThemeContext } from './context/theme/themeContext';
 
-const AppCard = ({ children }) => {
+export const AppCard = ({ children, ...props }) => {
+    const { color } = useContext(ThemeContext);
+    
     return (
-        <View style={styles.card}>
+        <View style={{ ...styles.card, backgroundColor: color, ...props.style }}>
             {children}
         </View>
     )
@@ -12,20 +15,17 @@ const AppCard = ({ children }) => {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: THEME.MAIN_COLOR,
-        alignItems: 'center',
+        shadowColor: 'black',
+        shadowOpacity: 0.8,
+        shadowOffset: {
+            width: 2,
+            height: 2
+        },
+        width: Dimensions.get('window').width / 1.5,
+        padding: 20,
+        elevation: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        shadowColor: 'black',
-        shadowOpacity: 0.5,
-        shadowOffset: {
-            width: 3,
-            height: 3,
-        },
-        elevation: 8,
-        width: '80%',
-        padding: 20,
+        alignItems: 'center'
     }
 })
-
-export default AppCard;
