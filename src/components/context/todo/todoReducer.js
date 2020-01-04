@@ -1,28 +1,33 @@
-import { ADD_TODOS, FETCH_TODOS, DELETE_TODOS, PRELOADER, SET_INDEX, CHANGE_TARGET } from "../types";
+import { ADD_TODO, DELETE_TODO, CHANGE_TODO, FETCH_TODOS, SET_LOADER, SET_ERROR } from "../types";
+
+const handlers = {
+    [ADD_TODO]: (state, { title, id }) => ({
+        ...state, todo: [ ...state.todo, { id, title } ]
+    }),
+    [DELETE_TODO]: (state, { id }) => ({
+        ...state, todo: state.todo.filter(e => e.id !== id)
+    }),
+    [CHANGE_TODO]: (state, { id, title }) => ({
+        ...state, todo: state.todo.map(e => {
+            if (e.id === id) {
+                e.title = title;
+            }
+            return e;
+        })
+    }),
+    [FETCH_TODOS]: (state, { todo }) => ({
+        ...state, todo
+    }),
+    [SET_LOADER]: (state, { load }) => ({
+        ...state, isLoad: load
+    }),
+    [SET_ERROR]: (state, { error }) => ({
+        ...state, error
+    }),
+    DEFAULT: state => state
+}
 
 export const todoReducer = (state, action) => {
-    switch (action.type) {
-        case ADD_TODOS: return {
-            ...state, todos: [
-                ...state.todos,
-                {id: Date.now().toString(), title: action.title}
-            ]
-        };
-        case FETCH_TODOS: return { ...state, todos: action.todos };
-        case DELETE_TODOS: return {
-            ...state,
-            todos: state.todos.filter(e => e.id !== action.id)
-        };
-        case PRELOADER: return { ...state, isLoad: action.load };
-        case SET_INDEX: return { ...state, index: action.index };
-        case CHANGE_TARGET: return {
-            ...state, todos: state.todos.map(e => {
-                if (e.id === action.id) {
-                    e.title = action.title;
-                }
-                return e;
-            })
-        };
-        default: return state;
-    }
+    const handler = handlers[action.type] || handlers.DEFAULT;
+    return handler(state, action);
 }

@@ -1,28 +1,32 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { THEME } from '../../theme';
 import { Wrapper } from './Wrapper';
 
-export const AddButton = ({ children, color = THEME.MAIN_COLOR, onPress }) => (
-    <Wrapper onPress={onPress}>
-        <View style={{ ...styles.button, backgroundColor: color }}>
-            <Text style={styles.text}>{children}</Text>
-        </View>
-    </Wrapper>
-)
+const AddButton = ({ children, onPress, color = 'gray', ...props }) => {
+    return (
+        <Wrapper onPress={onPress}>
+            <View style={{ ...styles.button, backgroundColor: color, ...props.style }}>
+                <Text style={styles.current}>{children}</Text>
+            </View>
+        </Wrapper>
+    )
+}
 
 const styles = StyleSheet.create({
     button: {
-        shadowColor: 'black',
+        padding: '2%',
+        alignItems: 'center',
         shadowOpacity: 0.4,
-        shadowOffset: {},
-        elevation: 8
+        shadowOffset: {
+            width: 2,
+            height: 2
+        }
     },
-    text: {
+    current: {
         color: 'white',
         textTransform: 'uppercase',
         fontSize: 20,
-        padding: '2%',
-        textAlign: 'center'
     }
 })
+
+export default AddButton;

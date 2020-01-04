@@ -1,7 +1,7 @@
-import { SET_THEME_COLOR } from "../types";
+import { THEME_SET_COLOR } from "../types"
 
 const handlers = {
-    [SET_THEME_COLOR]: (state, { color }) => ({
+    [THEME_SET_COLOR]: (state, { color }) => ({
         ...state, color
     }),
     DEFAULT: state => state

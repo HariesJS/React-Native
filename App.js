@@ -1,39 +1,39 @@
 import React, { useState } from 'react';
-import { MainLayout } from './src/components/MainLayout';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
+import MainLayout from './src/components/MainLayout';
+import { ThemeState } from './src/components/context/theme/ThemeState';
 import { TodoState } from './src/components/context/todo/TodoState';
 import { ScreenState } from './src/components/context/screen/ScreenState';
-import { ThemeState } from './src/components/context/theme/ThemeState';
 
-async function loadingApplication() {
+async function loadAppliaction() {
     await Font.loadAsync({
-        'roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
-        'roboto-bold': require('./assets/fonts/Roboto-Bold.ttf')
+        'roboto-bold': require('./assets/fonts/Roboto-Bold.ttf'),
+        'roboto-regular': require('./assets/fonts/Roboto-Regular.ttf')
     });
 }
 
 const App = () => {
-    const [load, setLoad] = useState(false);
+    const [isReady, setIsReady] = useState(false);
 
-    if (!load) {
+    if (!isReady) {
         return (
             <AppLoading
-                startAsync={loadingApplication}
+                startAsync={loadAppliaction}
                 onError={e => console.log(e)}
-                onFinish={() => setLoad(true)}
+                onFinish={() => setIsReady(true)}
             />
-        )
+        );
     }
     return (
         <ScreenState>
-            <ThemeState>
-                <TodoState>
+            <TodoState>
+                <ThemeState>
                     <MainLayout />
-                </TodoState>
-            </ThemeState>
+                </ThemeState>
+            </TodoState>
         </ScreenState>
-    )
+    );
 }
 
 export default App;

@@ -1,18 +1,16 @@
 import React, { useReducer } from 'react';
-import { themeReducer } from './themeReducer';
-import { SET_THEME_COLOR } from '../types';
-import { ThemeContext } from './themeContext';
+import { themeReducer } from "./themeReducer";
+import { ThemeContext } from "./themeContext";
+import { THEME_SET_COLOR } from '../types';
 
 export const ThemeState = ({ children }) => {
     const initialState = {
-        color: '#3959ab',
+        color: '#3959ab'
     }
 
     const [state, dispatch] = useReducer(themeReducer, initialState);
 
-    const setThemeColor = color => {
-        dispatch({ type: SET_THEME_COLOR, color });
-    }
+    const setThemeColor = color => dispatch({ type: THEME_SET_COLOR, color });
 
     return (
         <ThemeContext.Provider value={{
@@ -21,5 +19,5 @@ export const ThemeState = ({ children }) => {
         }}>
             {children}
         </ThemeContext.Provider>
-    )
+    );
 }

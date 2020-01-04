@@ -1,7 +1,12 @@
-import { SET_SCREEN } from "../types";
+import { SET_SCREEN, SET_INDEX } from "../types";
 
 const handlers = {
-    [SET_SCREEN]: (state, { todoId }) => ({ ...state, todoId }),
+    [SET_SCREEN]: (state, { todoId }) => ({
+        ...state, todoId
+    }),
+    [SET_INDEX]: (state, { index }) => ({
+        ...state, index
+    }),
     DEFAULT: state => state
 }
 

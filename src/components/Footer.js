@@ -1,23 +1,22 @@
 import React, { useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { Feather, Entypo } from '@expo/vector-icons';
-import { THEME } from '../theme';
 import { ThemeContext } from './context/theme/themeContext';
+import { Feather } from '@expo/vector-icons';
 
-const WithNav = (Component, name, color = 'white') => (
+const WithFeather = ({ name }) => (
     <TouchableOpacity>
-        <Component name={name} size={35} color={color} />
+        <Feather name={name} size={35} color='white' />
     </TouchableOpacity>
 )
 
-export const FooterBlock = () => {
+const FooterBlock = () => {
     const { color } = useContext(ThemeContext);
     
     return (
-        <View style={{...styles.footer, backgroundColor: color}}>
-            {WithNav(Feather, 'menu')}
-            {WithNav(Feather, 'message-circle')}
-            {WithNav(Entypo, 'users')}
+        <View style={{ ...styles.footer, backgroundColor: color }}>
+            <WithFeather name='menu' />
+            <WithFeather name='search' />
+            <WithFeather name='users' />
         </View>
     )
 }
@@ -25,12 +24,13 @@ export const FooterBlock = () => {
 const styles = StyleSheet.create({
     footer: {
         flex: 1,
-        flexDirection: 'row-reverse',
-        alignItems: 'center',
         justifyContent: 'space-around',
-        paddingBottom: Platform.OS === 'ios' ? '3%' : 0,
-        shadowColor: 'black',
+        alignItems: 'center',
         shadowOpacity: 0.8,
         shadowOffset: {},
+        flexDirection: 'row-reverse',
+        padding: Platform.OS === 'ios' ? '2%' : 0,
     }
 })
+
+export default FooterBlock;

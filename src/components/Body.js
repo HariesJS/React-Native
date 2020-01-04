@@ -1,81 +1,90 @@
-import React, { useContext, useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Text, Dimensions, TextInput, ScrollView, Alert } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
-import { THEME } from '../theme';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, Text, TextInput, Dimensions, ScrollView, Alert } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import { ThemeContext } from './context/theme/themeContext';
 import { TodoContext } from './context/todo/todoContext';
-import { AppLoad } from './ui/AppLoad';
 import { Wrapper } from './ui/Wrapper';
 import { ScreenContext } from './context/screen/screenContext';
-import { ThemeContext } from './context/theme/themeContext';
+import { AppLoad } from './ui/AppLoad';
+import AddButton from './ui/AddButton';
 
-export const BodyBlock = () => {
-    const { todos, addTodo, fetchTodos, deleteTarget, isLoad, setIndex } = useContext(TodoContext);
-    const { setScreen } = useContext(ScreenContext);
+const BodyBlock = () => {
     const { color } = useContext(ThemeContext);
+    const { todo, addTodo, deleteTodo, fetchTodos, isLoad, error } = useContext(TodoContext);
+    const { setIndex, setScreen } = useContext(ScreenContext);
+
     const [value, setValue] = useState('');
 
-    const loadTodos = useCallback(async () => fetchTodos(), [fetchTodos]);
+    const loadTodos = useCallback(() => fetchTodos(), [fetchTodos]);
 
     useEffect(() => {
         loadTodos();
     }, []);
 
-    const addTarget = () => {
+    const appendTarget = () => {
         if (value.trim() && value.trim().length >= 6) {
             addTodo(value);
             setValue('');
         } else if (!value.trim()) {
             Alert.alert('Enter target!');
         } else if (value.trim().length < 6) {
-            Alert.alert(`Target length min. is 6! Now length ${value.trim().length}`)
+            Alert.alert(`Min. target length is 6! Now length: ${value.trim().length}`);
         }
     }
 
-    const content = (
-        isLoad
-        ? <AppLoad />
-        : <Text style={styles.undefined}>Target list is null</Text>
-    )
+    if (error) {
+        return (
+            <View style={styles.errorBlock}>
+                <Text style={styles.error}>{error.toString()}</Text>
+                <AddButton onPress={loadTodos} color={color}>
+                    Retry
+                </AddButton>
+            </View>
+        )
+    }
+
     return (
-        <View style={styles.body}>
-            <Text style={styles.title}>Target List</Text>
+        <View style={styles.errorBlock}>
+            <Text style={styles.title}>Target list</Text>
             <View style={styles.form}>
                 <TextInput
+                    style={{ ...styles.input, borderColor: color }}
+                    maxLength={19}
+                    autoCapitalize='words'
+                    autoCorrect={false}
+                    placeholder='Enter target'
                     value={value}
                     onChangeText={setValue}
-                    placeholder='Enter target...'
-                    maxLength={19}
-                    autoCorrect={false}
-                    autoCapitalize='words'
-                    style={{ ...styles.input, borderBottomColor: color }}
                 />
-                <Entypo.Button
-                    name='new-message'
-                    onPress={addTarget}
+                <AntDesign.Button
                     style={{ backgroundColor: color }}
+                    name='edit'
+                    onPress={appendTarget}
                 >
                     Add
-                </Entypo.Button>
+                </AntDesign.Button>
             </View>
-            <ScrollView style={styles.scroll}>{
-                !todos.length
-                ? content
-                : todos.map(({ id, title }, index) => (
+            {isLoad
+            ? <AppLoad />
+            : <ScrollView style={styles.scroll}>{
+                !todo.length
+                ? <Text style={styles.undefined}>Target list is null</Text>
+                : todo.map(({ id, title }, index) => (
                     <Wrapper
                         key={id}
-                        onLongPress={() => deleteTarget(id, index + 1)}
+                        onLongPress={() => deleteTodo(id, index + 1)}
                         onPress={() => {
                             setScreen(id);
                             setIndex(index + 1);
                         }}
                     >
-                        <View style={{ ...styles.target_block, backgroundColor: color }}>
+                        <View style={{ ...styles.targetBlock, backgroundColor: color }}>
                             <Text style={styles.target}>{index + 1}</Text>
-                            <Text style={styles.target}>{title.trim()}</Text>
+                            <Text style={styles.target}>{title}</Text>
                         </View>
                     </Wrapper>
                 ))
-            }</ScrollView>
+            }</ScrollView>}
         </View>
     )
 }
@@ -86,46 +95,55 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     title: {
-        paddingTop: Dimensions.get('window').height / 10,
-        fontFamily: 'roboto-bold',
-        textTransform: 'uppercase',
         fontSize: 20,
+        textTransform: 'uppercase',
+        paddingTop: Dimensions.get('window').height / 8,
+        paddingBottom: '10%'
     },
     form: {
         flexDirection: 'row',
-        paddingTop: Dimensions.get('window').height / 20
     },
     input: {
-        borderStyle: 'solid',
         borderBottomWidth: 2,
-        width: Dimensions.get('window').width / 1.6,
+        borderStyle: 'solid',
+        width: Dimensions.get('window').width / 1.8,
         marginHorizontal: '1%'
     },
-    target_block: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: '5%',
-        shadowColor: 'black',
-        shadowOpacity: 0.8,
-        shadowOffset: {
-            width: 2,
-            height: 2
-        },
-        elevation: 8,
-        margin: '2%'
+    targetBlock: {
+       flexDirection: 'row',
+       padding: '5%',
+       justifyContent: 'space-between',
+       shadowOpacity: 0.8,
+       shadowOffset: {
+           width: 2,
+           height: 2
+       },
+       margin: '2%'
     },
     scroll: {
-        width: '80%',
-        paddingTop: Dimensions.get('window').height / 15
+        paddingTop: Dimensions.get('window').height / 20,
+        width: '80%'
     },
     target: {
-        color: 'white',
         fontSize: 20,
+        color: 'white'
     },
     undefined: {
+        fontSize: 20,
         textAlign: 'center',
-        paddingTop: Dimensions.get('window').height / 8,
-        fontSize: 18,
+        paddingTop: Dimensions.get('window').height / 10,
         textTransform: 'uppercase'
+    },
+    errorBlock: {
+        flex: 10,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    error: {
+        fontSize: 25,
+        paddingBottom: '5%',
+        textAlign: 'center'
     }
 })
+
+export default BodyBlock;

@@ -1,84 +1,88 @@
-import React, { useContext, useState } from 'react';
-import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
-import { AddButton } from '../components/ui/AddButton';
-import { Entypo, AntDesign, FontAwesome } from '@expo/vector-icons';
-import { AppCard } from '../components/AppCard';
-import { THEME } from '../theme';
-import { TodoContext } from '../components/context/todo/todoContext';
-import { ScreenContext } from '../components/context/screen/screenContext';
+import React, { useState, useContext } from 'react';
+import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Modal, TextInput } from 'react-native';
+import AppCard from '../components/AppCard';
+import { Feather, AntDesign } from '@expo/vector-icons';
+import AddButton from '../components/ui/AddButton';
 import { ThemeContext } from '../components/context/theme/themeContext';
+import { ScreenContext } from '../components/context/screen/screenContext';
+import { TodoContext } from '../components/context/todo/todoContext';
 
-const WithButtons = ({ title, titleTwo, prop, onPressOne, onPressTwo }) => (
-    <View style={{ ...styles.buttons, ...prop }}>
+const WithButtons = ({ style, nameOne, colorOne, onPressOne, nameTwo, colorTwo, onPressTwo, titleOne, titleTwo }) => (
+    <View style={style}>
         <View style={styles.button}>
-            <AddButton color='gray' onPress={onPressOne}>
-                {title
-                ? <Text>{title}</Text>
-                : <Entypo name='back' size={25} />}
+            <AddButton color={colorOne} onPress={onPressOne}>
+                {titleOne
+                ? titleOne 
+                : <AntDesign name={nameOne} size={35} color='white' />}
             </AddButton>
         </View>
         <View style={styles.button}>
-            <AddButton color='#84101B' onPress={onPressTwo}>
-                {titleTwo
-                ? <Text>{titleTwo}</Text>
-                : <AntDesign name='delete' size={25} />}
+            <AddButton color={colorTwo} onPress={onPressTwo}>
+                {titleTwo 
+                ? titleTwo 
+                : <AntDesign name={nameTwo} size={35} color='white' />}
             </AddButton>
         </View>
     </View>
 )
 
-export const TodoScreen = () => {
-    const { todos, index, deleteTarget, changeTarget } = useContext(TodoContext);
-    const { todoId, setScreen } = useContext(ScreenContext);
+const TodoScreen = () => {
     const { color } = useContext(ThemeContext);
+    const { index, todoId, setScreen } = useContext(ScreenContext);
+    const { todo, deleteTodo, changeTodo } = useContext(TodoContext);
 
-    const todo = todos.find(({ id }) => id === todoId);
+    const todos = todo.find(({ id }) => id === todoId);
 
-    const [value, setValue] = useState(todo.title);
     const [visible, setVisible] = useState(false);
+    const [value, setValue] = useState(todos.title);
 
-    const saveChanges = () => {
-        if (value.trim()) {
-            changeTarget(todo.id, value);
-            setVisible(false);
-        }
+    const onSave = () => {
+        changeTodo(todos.id, value);
+        setVisible(false);
     }
 
     return (
-        <View style={styles.todo}>
-            <WithButtons 
-                onPressOne={() => setScreen(null)} 
-                onPressTwo={() => deleteTarget(todo.id, index)}
+        <View style={styles.screen}>
+            <WithButtons
+                nameOne='back'
+                colorOne='gray'
+                onPressOne={() => setScreen(null)}
+                nameTwo='delete'
+                colorTwo='red'
+                onPressTwo={() => deleteTodo(todos.id, index)}
+                style={styles.buttons}
             />
             <Text style={styles.title}>Target number {index}</Text>
-            <View style={styles.card}>
-                <AppCard>
-                    <Text style={styles.target}>{todo.title}</Text>
-                    <TouchableOpacity>
-                        <FontAwesome
-                            name='edit' size={30}
+            <View style={styles.target}>
+                <AppCard style={styles.card}>
+                    <Text style={styles.currentTarget}>{todos.title}</Text>
+                    <TouchableOpacity onPress={() => setVisible(true)}>
+                        <Feather
+                            name='edit'
+                            size={30}
                             color='white'
-                            onPress={() => setVisible(true)}
                         />
                     </TouchableOpacity>
                 </AppCard>
             </View>
-            <Modal visible={visible} transparent={false} animationType='slide'>
+            <Modal visible={visible} animationType='slide'>
                 <View style={styles.form}>
-                    <TextInput
-                        value={value}
-                        onChangeText={setValue}
-                        style={{ ...styles.input, borderBottomColor: color }}
-                        maxLength={19}
-                        autoCorrect={false}
-                        autoCapitalize='words'
-                    />
+                    <View style={{ alignItems: 'center', paddingBottom: '2%' }}>
+                        <TextInput
+                            maxLength={19}
+                            value={value}
+                            onChangeText={setValue}
+                            style={{ ...styles.input, borderColor: color }}
+                        />
+                    </View>
                     <WithButtons
-                        title='Cancel'
-                        titleTwo='Save'
-                        prop={styles.next_buttons}
+                        titleOne='Cancel'
+                        colorOne='red'
                         onPressOne={() => setVisible(false)}
-                        onPressTwo={saveChanges}
+                        titleTwo='Save'
+                        colorTwo='green'
+                        style={styles.formButtons}
+                        onPressTwo={onSave}
                     />
                 </View>
             </Modal>
@@ -87,42 +91,51 @@ export const TodoScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    todo: {
-        flex: 10,
+    screen: {
+        flex: 10
     },
     title: {
         fontSize: 20,
-        textTransform: 'uppercase',
         textAlign: 'center',
-        paddingTop: Dimensions.get('window').height / 8
+        paddingTop: Dimensions.get('window').height / 8,
+        textTransform: 'uppercase'
+    },
+    card: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '80%'
+    },
+    target: {
+        alignItems: 'center',
+        paddingTop: Dimensions.get('window').height / 15
+    },
+    currentTarget: {
+        color: 'white',
+        fontSize: 20
     },
     buttons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 5
+        margin: '2%'
     },
     button: {
-        width: '40%'
-    },
-    target: {
-        fontSize: 20,
-        color: 'white'
-    },
-    card: {
-        alignItems: 'center',
-        paddingTop: Dimensions.get('window').height / 10
+        width: '40%',
     },
     form: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     input: {
-        borderStyle: 'solid',
         borderBottomWidth: 2,
-        width: Dimensions.get('window').width / 1.2
+        borderStyle: 'solid',
+        width: Dimensions.get('window').width / 1.5,
+        margin: '2%',
     },
-    next_buttons: {
-        width: Dimensions.get('window').width / 1.2
+    formButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingHorizontal: '2%'
     }
 })
+
+export default TodoScreen;

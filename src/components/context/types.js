@@ -1,16 +1,17 @@
-// TODOS
-
-export const ADD_TODOS = 'ADD-TODOS';
-export const FETCH_TODOS = 'FETCH-TODOS';
-export const DELETE_TODOS = 'DELETE-TODOS';
-export const PRELOADER = 'PRELOADER';
-export const SET_INDEX = 'SET-INDEX';
-export const CHANGE_TARGET = 'CHANGE-TARGET';
-
-// SCREENS
-
-export const SET_SCREEN = 'SET-CREEN';
-
 // THEME
 
-export const SET_THEME_COLOR = 'SET-THEME-COLOR';
+export const THEME_SET_COLOR = 'THEME-SET-COLOR';
+
+// TODO
+
+export const ADD_TODO = 'ADD-TODO';
+export const DELETE_TODO = 'DELETE-TODO';
+export const CHANGE_TODO = 'CHANGE-TODO';
+export const FETCH_TODOS = 'FETCH-TODOS';
+export const SET_LOADER = 'SET-LOADER';
+export const SET_ERROR = 'SET-ERROR';
+
+// SCREEN
+
+export const SET_SCREEN = 'SET-SCREEN';
+export const SET_INDEX = 'SET-INDEX';
