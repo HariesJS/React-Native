@@ -23,9 +23,11 @@ export const TodoState = ({ children }) => {
         try {
             setLoader(true);
             const data = await Http.get('https://rn-todo-app-63190.firebaseio.com/todos.json');
-            const todo = Object.keys(data).map(e => ({ ...data[e], id: e }));
-            console.log(todo);
-            dispatch({ type: FETCH_TODOS, todo });
+            if (data) {
+                const todo = Object.keys(data).map(e => ({ ...data[e], id: e }));
+                console.log(todo);
+                dispatch({ type: FETCH_TODOS, todo });
+            }
         } catch (e) {
             setError(e);
         } finally {
